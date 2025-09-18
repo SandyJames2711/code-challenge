@@ -1,1 +1,12 @@
-[{}]
+[
+  {
+    "email": "sandrine@test.com",
+    "customerId": "cus_T4r3HRs7CrUjIj",
+    "country": "BE"
+  },
+  {
+    "email": "lucas@test.com",
+    "customerId": "cus_T4r3dlueaAzT88",
+    "country": "BE"
+  }
+]
