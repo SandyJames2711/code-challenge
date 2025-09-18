@@ -1,0 +1,5 @@
+[
+  { "firstName": "Sandrine", "lastName": "Desmet", "email": "sandrine@test.com", "country": "BE" },
+  { "firstName": "Virginie", "lastName": "Bordeaux", "email": "virginie@test.com", "country": "FR" },
+  { "firstName": "Lucas", "lastName": "Dumont", "email": "lucas@test.com", "country": "BE" }
+]
