@@ -8,34 +8,54 @@ const handler = async (country) => {
   try{
     let finalCustomers = []
 
-    /* add code below this line */
-    
-    // filter the customers by country
-    // transform customers to save into Stripe
-    // for each customer create a Stripe customer
-    // push into finalCustomers the stripe customers with email, country and id as properties.
-    // write finalCustomers array into final-customers.json using fs
-    /* 
-      finalCustomers array should look like:
-      finalCustomers = [{
-          email: test@test.com
-          customerId: 1d833d-12390sa-9asd0a2-asdas,
-          country: 'ES'
-        },
-        {
-          email: test@test.com
-          customerId: 1d833d-12390sa-9asd0a2-asdas,
-          country: 'ES'
-        }
-      }] 
-    */
+    // load customers.json 
+    const customers = JSON.parse(fs.readFileSync('customers.json', 'utf-8'));
 
-    /* add code above this line */
+    const targetCountry = (country || '').trim().toUpperCase();
+    if (!targetCountry) throw new Error('Please provide a country alpha-2 code (e.g., "BE").');
+
+    // filter by country
+     const filtered = customers.filter(c =>
+      (c.country || c.countryCode || '').toString().trim().toUpperCase() === targetCountry
+    );
+
+
+     // transform customers to save into Stripe
+    for (const c of filtered) {
+      const name = [c.firstName, c.lastName].filter(Boolean).join(' ').trim() || undefined;
+      const email = (c.email || '').trim().toLowerCase();
+      if (!email) continue;
+
+      
+      // for each customer create a Stripe customer
+      const created = await stripe.customers.create({
+        name,
+        email,
+        metadata: {
+          source_id: c.id ? String(c.id) : '',
+          source_country: targetCountry,
+        },
+      });
+
+      // push into finalCustomers the stripe customers with email, country and id as properties.
+      finalCustomers.push({
+        email,
+        customerId: created.id,
+        country: targetCountry,
+      });
+    }
+
+    // write finalCustomers array into final-customers.json using fs
+    fs.writeFileSync('final-customers.json', JSON.stringify(finalCustomers, null, 2), 'utf-8');
+
+    
 
     console.log(finalCustomers)
 
 }catch(e){
   throw e
 }
- 
-} 
+};
+module.exports = { handler };
+
+
